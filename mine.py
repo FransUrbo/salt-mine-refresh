@@ -55,13 +55,14 @@ def remove_stale(time, update=False, alert=True):
     # Remove stale mine data
     remove_stale_command = [
         "find", "/var/cache/salt/master/minions/",
-        "-type", "f", "-name", "data.p", "!",
+        "-type", "f", "-name", "data.p", "-o",
+        "-name", "mine.p", "!",
         "-newermt", "-{} {}".format(n_time, t_time),
         "-printf", "%h",
         "-exec", "bash", "-c", "rm {}", ";"
     ]
 
-    subprocess.call(remove_stale_command)
+    subprocess.call(remove_stale_command, stdout=None, stderr=None)
 
     if alert is True:
         caller = salt.client.Caller()
